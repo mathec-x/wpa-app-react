@@ -1,5 +1,4 @@
 import React from 'react';
-import { post } from './Auth';
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
@@ -9,6 +8,8 @@ import NotificationsOffIcon from '@material-ui/icons/NotificationsOff';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import NotificationImportantIcon from '@material-ui/icons/NotificationImportant';
 import urlBase64ToUint8Array from '../serviceWorker'
+
+import { post } from './Auth'; // a custom post having header bearer token with fetch
 
 function notifyMe() {
     if (Notification.permission !== 'granted')
