@@ -1,48 +1,55 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
 const usePWA = () => {
   /**@type {[string: "web"|"standalone" ]} */
-  const [isInstalled, setIsInstalled] = React.useState(null);
-  const [supportsPWA, setSupportsPWA] = React.useState(false);
-  const [promptInstall, setPromptInstall] = React.useState(null);
+  const [isInstalled, setIsInstalled] = useState(null);
+  const [supportsPWA, setSupportsPWA] = useState(false);
+  const [promptInstall, setPromptInstall] = useState(null);
 
-  React.useEffect(() => {
-
+  useEffect(() => {
     const handler = e => {
       e.preventDefault();
-      setSupportsPWA(true);
       setPromptInstall(e);
+      setSupportsPWA(true);
+
     };
+
+    const CheckStandalone = () => {
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        setIsInstalled('standalone');
+      } else {
+        setIsInstalled('web');
+      }
+
+    }
+
+    const checker = (evt) => {
+      setIsInstalled('standalone');
+    }
 
     window.addEventListener("beforeinstallprompt", handler);
-    
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled('standalone');
-    } else {
-      setIsInstalled('web');
-    }
-
-    window.addEventListener('appinstalled', (evt) => {
-      console.log('app installed');
-      setIsInstalled('standalone');
-    });
+    window.addEventListener('appinstalled', checker);
+    CheckStandalone();
 
     return () => {
-      window.removeEventListener("transitionend", handler)
-    };
+      window.removeEventListener("transitionend", handler);
+      CheckStandalone();
+
+    }
   }, []);
 
-  const onClickInstall = evt => {
+  const onClickInstall = async evt => {
     evt.preventDefault();
 
-    if(promptInstall && isInstalled === "web"){
-      promptInstall.prompt();
+    try {
+
+      const tryInstall = await promptInstall.prompt();
+      console.log({ tryInstall });
+
+    } catch (error) {
+      console.log({ error })
+
     }
-
-    if(isInstalled === 'standalone') 
-      window.location.reload()
-
-    // else window.open('/', '_blank')
   };
 
 
